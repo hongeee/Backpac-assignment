@@ -4,9 +4,13 @@ import com.hongeee.backpac.user.dto.UserDto;
 import com.hongeee.backpac.user.entity.User;
 import com.hongeee.backpac.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,5 +22,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUserAccount(UserDto userDto) {
         return userRepository.save(userDto.toEntity());
+    }
+
+    @Override
+    public User getUserAccount(String email) {
+        Optional<User> user = userRepository.findById(email);
+
+        return user.orElse(null);
+    }
+
+    @Override
+    public Page<User> getUserAccounts(Pageable pageable) {
+        int page = pageable.getPageNumber();
+        pageable = PageRequest.of(page <= 0 ? 0 : page - 1, pageable.getPageSize());
+
+        return userRepository.findAll(pageable);
     }
 }
