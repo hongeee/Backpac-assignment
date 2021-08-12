@@ -1,13 +1,15 @@
 package com.hongeee.backpac.user.entity;
 
+import com.hongeee.backpac.order.entity.UserOrder;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,6 +34,10 @@ public class User {
     @Nullable
     private String gender;
 
+    @OneToMany
+    @JoinColumn(name = "email")
+    private List<UserOrder> userOrders = new ArrayList<>();
+
     @Builder
     public User(String email, String username, String nickname, String password,
                 String phoneNumber, String gender) {
@@ -41,6 +47,11 @@ public class User {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.gender = gender;
+    }
+
+    public void addUserOrder(UserOrder userOrder) {
+        userOrders.add(userOrder);
+        userOrder.setUser(this);
     }
 }
 
