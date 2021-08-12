@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
-    User createUserAccount(UserDto userDto);
+    User createUserAccount(User user);
 
     User getUserAccount(String email);
 
-    Page<User> getUserAccounts(Pageable pageable);
+    Page<User> getUserAccounts(Pageable pageable, String username, String email);
 }
