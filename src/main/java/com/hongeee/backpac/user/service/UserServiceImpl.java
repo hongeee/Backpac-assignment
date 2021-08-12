@@ -1,6 +1,5 @@
 package com.hongeee.backpac.user.service;
 
-import com.hongeee.backpac.user.dto.UserDto;
 import com.hongeee.backpac.user.entity.User;
 import com.hongeee.backpac.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User createUserAccount(UserDto userDto) {
-        return userRepository.save(userDto.toEntity());
+    public User createUserAccount(User user) {
+        return userRepository.save(user);
     }
 
     @Override
@@ -32,9 +31,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> getUserAccounts(Pageable pageable) {
+    public Page<User> getUserAccounts(Pageable pageable, String username, String email) {
         int page = pageable.getPageNumber();
         pageable = PageRequest.of(page <= 0 ? 0 : page - 1, pageable.getPageSize());
+
+        if (username != null && email != null) {
+            return userRepository.findAllByEmailAndUsername(pageable, email, username);
+        }
+
+        if (username != null) {
+            return userRepository.findAllByUsername(pageable, username);
+        }
+
+        if (email != null) {
+            return userRepository.findAllByEmail(pageable, email);
+        }
 
         return userRepository.findAll(pageable);
     }
